@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.litert.support.api)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -62,5 +63,6 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
-    implementation("org.tensorflow:tensorflow-lite:2.13.0")
+    implementation(libs.tensorflow.lite)
+    implementation("com.google.code.gson:gson:2.8.7")
 }
