@@ -1,24 +1,39 @@
 package com.example.basicml;
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import android.content.res.AssetFileDescriptor;
 import java.io.*;
+import java.lang.reflect.Type;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.*;
 import java.util.stream.Collectors;
+import android.content.ContextWrapper;
+import android.os.Build;
+
 public class TextPreprocessing {
     // 1. JSON 파일에서 Tokenizer 로드
-    public static Map<String, Integer> loadTokenizer(String filePath) throws IOException {
-        Gson gson = new Gson();
-        try (Reader reader = new FileReader(filePath)) {
-            JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-            JsonObject wordIndex = jsonObject.getAsJsonObject("config").getAsJsonObject("word_index");
-
-            // JSON에서 단어-인덱스 매핑 추출
-            Map<String, Integer> wordMap = new HashMap<>();
-            for (Map.Entry<String, JsonElement> entry : wordIndex.entrySet()) {
-                wordMap.put(entry.getKey(), entry.getValue().getAsInt());
-            }
-            return wordMap;
+    public static Map<String, Integer> loadTokenizer(String tk_path) throws IOException {
+        InputStream is = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            is = new AsyncFileChannelInputStream(Paths.get(tk_path));
         }
+        BufferedReader reader = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            reader = new BufferedReader(new InputStreamReader(is));
+        }
+        StringBuilder json = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            json.append(line);
+        }
+        reader.close();
+
+        // JSON 문자열을 Map으로 변환
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<String, Integer>>() {}.getType();
+        return gson.fromJson(json.toString(), type);
     }
 
     // 2. 텍스트 데이터를 소문자로 변환

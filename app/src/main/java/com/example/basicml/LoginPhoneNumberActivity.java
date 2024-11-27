@@ -76,7 +76,12 @@ public class LoginPhoneNumberActivity extends AppCompatActivity {
                 int dimension = 10000; // 벡터화 차원
                 double[][] vectors = TextPreprocessing.vectorizeSequences(sequences, dimension);
 
-                tflite.run(vectors, outputArray);
+                try {
+                    tflite.run(vectors, outputArray);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // UI에 적절히 오류 메시지를 표시하거나 로깅 처리
+                }
                 float positiveScore = outputArray[0][1];
                 float negativeScore = outputArray[0][0];
 
